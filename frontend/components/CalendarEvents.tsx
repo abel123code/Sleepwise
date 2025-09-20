@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { calendarService, CalendarEvent } from '@/services/calendarService';
+import { settingsService, UserSettings } from '@/services/settingsService';
 import EventDetailsModal from './EventDetailsModal';
+import SettingsModal from './SettingsModal';
+import WelcomeMessage from './WelcomeMessage';
 
 export default function CalendarEvents() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -12,6 +15,8 @@ export default function CalendarEvents() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [settings, setSettings] = useState<UserSettings>({});
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
   const loadEvents = useCallback(async (showLoading = true) => {
     try {
@@ -63,10 +68,32 @@ export default function CalendarEvents() {
     }
   }, []);
 
+  const loadSettings = useCallback(async () => {
+    try {
+      const userSettings = await settingsService.getSettings();
+      setSettings(userSettings);
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  }, []);
+
+  const handleSettingsSave = useCallback((newSettings: UserSettings) => {
+    setSettings(newSettings);
+  }, []);
+
+  const handleOpenSettings = useCallback(() => {
+    setSettingsModalVisible(true);
+  }, []);
+
+  const handleCloseSettings = useCallback(() => {
+    setSettingsModalVisible(false);
+  }, []);
+
 
   useEffect(() => {
     loadEvents();
-  }, [loadEvents]);
+    loadSettings();
+  }, [loadEvents, loadSettings]);
 
   if (loading) {
     return (
@@ -112,6 +139,12 @@ export default function CalendarEvents() {
       }
     >
       <View className="p-4">
+        {/* Welcome Message Component */}
+        <WelcomeMessage 
+          settings={settings} 
+          onOpenSettings={handleOpenSettings} 
+        />
+
         {/* Header */}
         <View className="bg-white rounded-lg p-4 mb-4 shadow-sm">
           <View className="flex-row items-center justify-between mb-2">
@@ -184,6 +217,13 @@ export default function CalendarEvents() {
         visible={modalVisible}
         event={selectedEvent}
         onClose={handleCloseModal}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        visible={settingsModalVisible}
+        onClose={handleCloseSettings}
+        onSave={handleSettingsSave}
       />
     </ScrollView>
   );

@@ -1,7 +1,6 @@
 // Calendar API service
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_BASE_URL = 'https://749693501703.ngrok-free.app';
+import { getApiUrl } from '../config/api';
 
 export interface CalendarEvent {
   id: string;
@@ -55,7 +54,7 @@ export interface BreakdownResponse {
 export const calendarService = {
   async getDayEvents(date: string): Promise<CalendarResponse> {
     try {
-      const url = `${API_BASE_URL}/calendar/day?date=${date}`;
+      const url = getApiUrl.calendar.dayEvents(date);
       
       const response = await fetch(url, {
         method: 'GET',
@@ -108,7 +107,7 @@ export const calendarService = {
   // Break down event into subtasks
   async breakDownEvent(event: CalendarEvent): Promise<BreakdownResponse> {
     try {
-      const url = `${API_BASE_URL}/api/events/breakdown`;
+      const url = getApiUrl.events.breakdown();
       
       // Calculate duration in minutes
       const startTime = new Date(event.start.dateTime || event.start.date || '');

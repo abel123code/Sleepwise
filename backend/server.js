@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 console.log("📦 Importing routes...");
 import calendarRoutes from './src/routes/calendar.js';
 import eventsRoutes from './src/routes/events.js';
+import callsRoutes from './src/routes/calls.js';
 console.log("✅ Routes imported successfully");
 
 dotenv.config();
@@ -101,6 +102,7 @@ app.get('/api/auth/callback/google', (req, res) => {
 console.log("🔧 Setting up routes...");
 app.use('/calendar', calendarRoutes);
 app.use('/api/events', eventsRoutes);
+app.use('/api/calls', callsRoutes);
 console.log("✅ Routes mounted successfully");
 
 
@@ -117,9 +119,13 @@ app.get('/api', (req, res) => {
       events: {
         breakdown: 'POST /api/events/breakdown'
       },
+      calls: {
+        trigger: 'POST /api/calls/trigger',
+        status: 'GET /api/calls/status/:callId'
+      },
       oauth: {
         callback: '/api/auth/callback/google'
-      }
+      },
     }
   });
 });
