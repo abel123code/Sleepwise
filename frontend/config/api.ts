@@ -8,7 +8,7 @@
 // 4. Save this file - all API calls will now use the new URL
 
 // Current ngrok URL - update this when your ngrok URL changes
-export const API_BASE_URL = 'https://749693501703.ngrok-free.app';
+export const API_BASE_URL = 'https://28da5b05871c.ngrok-free.app';
 
 // API endpoints
 export const API_ENDPOINTS = {
